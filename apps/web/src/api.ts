@@ -1,0 +1,3 @@
+const API=import.meta.env.VITE_API_URL||'http://localhost:4000/api';
+export async function api<T>(path:string,options:RequestInit={}){const token=localStorage.getItem('flowdesk_token');const res=await fetch(API+path,{...options,headers:{'Content-Type':'application/json',...(token?{Authorization:`Bearer ${token}`}:{}) ,...(options.headers||{})}});if(!res.ok){const body=await res.json().catch(()=>({}));throw new Error(body.message||'Request failed')}return res.status===204?undefined as T:res.json() as Promise<T>}
+export const authApi={login:(data:object)=>api<any>('/auth/login',{method:'POST',body:JSON.stringify(data)}),register:(data:object)=>api<any>('/auth/register',{method:'POST',body:JSON.stringify(data)}),me:()=>api<any>('/auth/me')};
